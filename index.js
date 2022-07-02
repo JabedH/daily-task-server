@@ -20,9 +20,17 @@ async function run() {
   try {
     await client.connect();
     const todolistCollection = client.db("todlist_data").collection("addlist");
+    const CompleteCollection = client.db("todlist_data").collection("complete");
+
     app.get("/addlist", async (req, res) => {
       const query = {};
       const cursor = todolistCollection.find(query);
+      const allList = await cursor.toArray();
+      res.send(allList);
+    });
+    app.get("/complete", async (req, res) => {
+      const query = {};
+      const cursor = CompleteCollection.find(query);
       const allList = await cursor.toArray();
       res.send(allList);
     });
