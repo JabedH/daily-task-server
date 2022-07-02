@@ -26,6 +26,25 @@ async function run() {
       const allList = await cursor.toArray();
       res.send(allList);
     });
+    app.get("/addlist/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const tools = await todolistCollection.findOne(query);
+      res.send(tools);
+    });
+    app.post("/addlist", async (req, res) => {
+      const newList = req.body;
+      const result = await todolistCollection.insertOne(newList);
+      res.send(result);
+    });
+    app.patch("/addlist/:id", async (req, res) => {
+      const email = req.query.email;
+      const info = req.body;
+      console.log(info, email);
+      const filter = { email: email };
+      const allCollection = await todolistCollection.updateOne(info, filter);
+      res.send(allCollection);
+    });
   } finally {
   }
 }
