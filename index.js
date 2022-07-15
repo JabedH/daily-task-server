@@ -2,12 +2,39 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
+var jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
+
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:3000",
+//       "https://quiet-mountain-32735.herokuapp.com",
+//     ],
+//     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//   })
+// );
+
+const verifyJWT = (req, res, next) => {
+  const authHeaders = req.headers.authorization;
+  console.log("inside verify token", authHeaders);
+  if (!authHeaders) {
+    return res.status(401).send({ message: "unauthorized" });
+  }
+  const token = authHeaders.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    if (err) {
+      return res.status(403).send({ message: "forbidden" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
 
 const uri = `mongodb+srv://daily-task:q5dERTEyAF7q84LL@cluster0.jptsq.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -23,14 +50,28 @@ async function run() {
     const todolistCollection = client.db("todlist_data").collection("addlist");
     const CompleteCollection = client.db("todlist_data").collection("complete");
 
-    app.get("/addlist", async (req, res) => {
-      const query = {};
+    // auth
+    app.post("/login", async (req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
+        expiresIn: "10d", // optional//
+      });
+      res.send({
+        success: true,
+        accessToken: accessToken,
+      });
+    });
+
+    app.get("/addlist", verifyJWT, async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
       const cursor = todolistCollection.find(query);
       const allList = await cursor.toArray();
       res.send(allList);
     });
     app.get("/complete", async (req, res) => {
-      const query = {};
+      const email = req.query.email;
+      const query = { email: email };
       const cursor = CompleteCollection.find(query);
       const allList = await cursor.toArray();
       res.send(allList);
@@ -77,14 +118,6 @@ async function run() {
       );
       res.send(result);
     });
-    // app.patch("/addlist/:id", async (req, res) => {
-    //   const email = req.query.email;
-    //   const info = req.body;
-    //   console.log(info, email);
-    //   const filter = { email: email };
-    //   const allCollection = await todolistCollection.updateOne(info, filter);
-    //   res.send(allCollection);
-    // });
   } finally {
   }
 }
