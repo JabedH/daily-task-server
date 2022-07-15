@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
-var jwt = require("jsonwebtoken");
+// var jwt = require("jsonwebtoken");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
@@ -10,21 +10,21 @@ const ObjectId = require("mongodb").ObjectId;
 app.use(express.json());
 app.use(cors());
 
-const verifyJWT = (req, res, next) => {
-  const authHeaders = req.headers.authorization;
-  console.log("inside verify token", authHeaders);
-  if (!authHeaders) {
-    return res.status(401).send({ message: "unauthorized" });
-  }
-  const token = authHeaders.split(" ")[1];
-  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
-    if (err) {
-      return res.status(403).send({ message: "forbidden" });
-    }
-    req.decoded = decoded;
-    next();
-  });
-};
+// const verifyJWT = (req, res, next) => {
+//   const authHeaders = req.headers.authorization;
+//   console.log("inside verify token", authHeaders);
+//   if (!authHeaders) {
+//     return res.status(401).send({ message: "unauthorized" });
+//   }
+//   const token = authHeaders.split(" ")[1];
+//   jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+//     if (err) {
+//       return res.status(403).send({ message: "forbidden" });
+//     }
+//     req.decoded = decoded;
+//     next();
+//   });
+// };
 
 const uri = `mongodb+srv://daily-task:LdDeTMj9oEC4kHAT@cluster0.jptsq.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -36,7 +36,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
     const todolistCollection = client.db("todlist_data").collection("addlist");
     const CompleteCollection = client.db("todlist_data").collection("complete");
 
