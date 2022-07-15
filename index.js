@@ -41,16 +41,16 @@ async function run() {
     const CompleteCollection = client.db("todlist_data").collection("complete");
 
     // auth
-    app.post("/login", async (req, res) => {
-      const user = req.body;
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN);
-      res.send({
-        success: true,
-        accessToken: accessToken,
-      });
-    });
+    // app.post("/login", async (req, res) => {
+    //   const user = req.body;
+    //   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN);
+    //   res.send({
+    //     success: true,
+    //     accessToken: accessToken,
+    //   });
+    // });
 
-    app.get("/addlist", verifyJWT, async (req, res) => {
+    app.get("/addlist", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = todolistCollection.find(query);
