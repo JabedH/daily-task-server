@@ -10,15 +10,12 @@ const ObjectId = require("mongodb").ObjectId;
 app.use(express.json());
 app.use(cors());
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://quiet-mountain-32735.herokuapp.com",
-    ],
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://quiet-mountain-32735.herokuapp.com"],
+//     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//   })
+// );
 
 const verifyJWT = (req, res, next) => {
   const authHeaders = req.headers.authorization;
