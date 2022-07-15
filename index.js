@@ -36,7 +36,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
     const todolistCollection = client.db("todlist_data").collection("addlist");
     const CompleteCollection = client.db("todlist_data").collection("complete");
 
@@ -50,7 +50,7 @@ async function run() {
       });
     });
 
-    app.get("/addlist", async (req, res) => {
+    app.get("/addlist", verifyJWT, async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = todolistCollection.find(query);
