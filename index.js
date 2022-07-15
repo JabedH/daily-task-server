@@ -10,13 +10,6 @@ const ObjectId = require("mongodb").ObjectId;
 app.use(express.json());
 app.use(cors());
 
-// app.use(
-//   cors({
-//     origin: ["https://quiet-mountain-32735.herokuapp.com"],
-//     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-//   })
-// );
-
 const verifyJWT = (req, res, next) => {
   const authHeaders = req.headers.authorization;
   console.log("inside verify token", authHeaders);
@@ -33,7 +26,7 @@ const verifyJWT = (req, res, next) => {
   });
 };
 
-const uri = `mongodb+srv://daily-task:q5dERTEyAF7q84LL@cluster0.jptsq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://daily-task:LdDeTMj9oEC4kHAT@cluster0.jptsq.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -50,16 +43,14 @@ async function run() {
     // auth
     app.post("/login", async (req, res) => {
       const user = req.body;
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
-        expiresIn: "10d", // optional//
-      });
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN);
       res.send({
         success: true,
         accessToken: accessToken,
       });
     });
 
-    app.get("/addlist", verifyJWT, async (req, res) => {
+    app.get("/addlist",verifyJWT, async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = todolistCollection.find(query);
