@@ -50,7 +50,7 @@ async function run() {
       });
     });
 
-    app.get("/addlist", verifyJWT, async (req, res) => {
+    app.get("/addlist", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = todolistCollection.find(query);
